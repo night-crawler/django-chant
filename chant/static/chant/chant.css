@@ -1,0 +1,40 @@
+#stick-bottom {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #f5f5f5;
+    border-top: solid 2px #aaa;
+}
+
+.stick-bottom-minified {
+    height: 20px;
+}
+
+#stick-bottom > .container {
+    margin-top: 5px;
+}
+
+.chant-messages {
+
+}
+
+.chant-message {
+    border-bottom: solid 1px #aaa;
+    margin-bottom: 1px;
+}
+
+.chant-message > .chant-message-wrapper {
+    margin-left: 50px;
+}
+
+.tab-content {
+    margin-top: 10px;
+}
+
+.chant-message-area .info-area {
+    height: 20px;
+}
+
+.chant-info-wrapper {
+    display: inline;
+}

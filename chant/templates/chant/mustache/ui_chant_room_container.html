@@ -1,0 +1,13 @@
+{% load i18n %}
+<script type="text/template" id="chant-ui-room-container-template" xmlns="http://www.w3.org/1999/html">
+{% verbatim %}
+    <div class="room-messages hidden" data-room="{{ room }}">
+        <a href="" class="btn btn-xs btn-default col-xs-11 load-room-history" data-room="{{ room }}">
+            <i class="glyphicon glyphicon-arrow-up"></i>
+        </a>
+        <a href="" class="btn btn-xs btn-default col-xs-1 scroll-down" data-room="{{ room }}">
+            <i class="glyphicon glyphicon-arrow-down"></i>
+        </a>
+    </div>
+{% endverbatim %}
+</script>

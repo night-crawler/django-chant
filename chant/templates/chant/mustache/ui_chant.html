@@ -1,0 +1,64 @@
+{% load i18n %}
+<script type="text/template" id="chant-ui-template" xmlns="http://www.w3.org/1999/html">
+<div class="chant-message-area col-xs-9">
+    <div class="chant-messages slim-scroll"></div>
+
+    <div class="info-area"></div>
+    <form class="form-horizontal chant-send-form">
+        <textarea rows="2" name="message" class="col-xs-11" placeholder="{% trans "Type message" %}"></textarea>
+        <button class="btn btn-primary btn-lg col-xs-1" name="send-message">↵</button>
+    </form>
+    <div class="clearfix"></div>
+</div>
+
+<div class="chant-rooms-area col-xs-3">
+    <form class="form-horizontal">
+        <input name="room-filter" placeholder="{% trans "Filter rooms" %}" class="col-xs-12">
+    </form>
+    <div class="clearfix"></div>
+    <div class="slim-scroll chant-rooms-list"></div>
+    <a href="" class="btn btn-default btn-block btn-xs refresh-rooms"><i class="glyphicon glyphicon-refresh"></i></a>
+</div>
+</script>
+
+
+<script type="text/template" id="chant-ui-onopen-template" xmlns="http://www.w3.org/1999/html">
+<span class="label label-info">
+    <i class="glyphicon glyphicon-ok"></i>
+    {% trans "Connected" %}
+</span>
+</script>
+
+<script type="text/template" id="chant-ui-onclose-template" xmlns="http://www.w3.org/1999/html">
+<span class="label label-warning">
+    <i class="glyphicon glyphicon-ban-circle"></i>
+    {% trans "Disconnected" %}
+</span>
+</script>
+
+<script type="text/template" id="chant-ui-typing-icon-template" xmlns="http://www.w3.org/1999/html">
+{% verbatim %}
+    <img src="{{ user.avatar }}"
+         title="{{ user.username }}"
+         alt="{{ user.username }}"
+         data-user="{{ user.id }}"
+         width="{{ width }}"
+         height="{{ height }}"
+         class="img-typing">
+{% endverbatim %}
+</script>
+
+<script type="text/template" id="chant-ui-rate-limit-template" xmlns="http://www.w3.org/1999/html">
+<span class="label label-warning">
+    <i class="glyphicon glyphicon-ban-circle"></i>
+    {% trans "Rate limit exceeded" %}
+</span>
+</script>
+
+
+<script type="text/template" id="chant-ui-error-template" xmlns="http://www.w3.org/1999/html">
+<span class="label label-danger">
+    <i class="glyphicon glyphicon-ban-circle"></i>
+    {% trans "Error" %}
+</span>
+</script>

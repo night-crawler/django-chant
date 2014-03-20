@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>{% block title %}{% endblock %}</title>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css"/>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="{{ STATIC_URL }}chant/bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}chant/lib/slimscroll/jquery.slimscroll.js"></script>
+    <script src="{{ STATIC_URL }}chant/lib/jquery.mustache.js"></script>
+    <script src="{{ STATIC_URL }}chant/lib/moment-with-langs.min.js"></script>
+    <script src="{{ STATIC_URL }}chant/lib/timers.js"></script>
+    <script src="{{ STATIC_URL }}chant/lib/chant.js"></script>
+
+
+    <link href="{{ STATIC_URL }}chant/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}chant/bootstrap/css/bootstrap-theme.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}chant/chant.css" rel="stylesheet">
+
+    {% block head_scripts %}{% endblock %}
+</head>
+
+<body>
+
+
+{% include "chant/navbar.html" %}
+
+
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+{% block footer %}
+{% include "chant/footer_tools.html" %}
+{% endblock %}
+
+</body>
+</html>
+

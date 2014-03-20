@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+{% block content %}
+
+    <div class="page-header">
+        <h1>{% trans "Add subscriber in room" %} {{ room }}</h1>
+    </div>
+
+    <form class="form-horizontal" method="POST" enctype="multipart/form-data">
+        <div class="row col-xs-9 form-content">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="clearfix form-actions">
+            <div class="">
+                <button class="btn btn-info" name="save" value="1" type="submit">
+                    <i class="icon-ok bigger-110"></i>
+                    {% trans "Save" %}
+                </button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+

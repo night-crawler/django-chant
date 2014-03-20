@@ -1,0 +1,15 @@
+<script type="text/template" id="chant-rooms-list-template">
+{% verbatim %}
+    <ul class="list-group small">
+    {{ #data }}
+        <a id="chant-activate-room-{{ id }}" class="list-group-item activate-room" data-room="{{ id }}" href="">
+            <span class="badge unread-count"></span>
+            <span class="room-name">{{ name }}</span>
+        </a>
+    {{ /data }}
+    </ul>
+{% endverbatim %}
+</script>
+
+
+

@@ -1,0 +1,56 @@
+{% load i18n %}
+<div id="stick-bottom">
+    <div class="container stick-bottom-minified">
+        <div class="pull-right">
+            <a class="btn btn-default btn-xs toggle-dock"><i class="glyphicon glyphicon-align-justify"></i></a>
+        </div>
+
+        <div class="bottom-content collapse">
+            <ul class="nav nav-pills">
+                <li class="active"><a href="#chant" data-toggle="tab">{% trans "Chat" %}</a></li>
+                <li><a href="#tools" data-toggle="tab">{% trans "Tools" %}</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="chant"></div>
+                <div class="tab-pane" id="tools">{% trans "sample" %}</div>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+
+{% include "chant/mustache/ui_chant_rooms_list.html" %}
+{% include "chant/mustache/ui_chant_message.html" %}
+{% include "chant/mustache/ui_chant.html" %}
+{% include "chant/mustache/ui_chant_room_container.html" %}
+
+
+<script>
+    var chant = $('#chant').Chant({
+        ws_url: 'ws://{{ request.META.HTTP_HOST }}:8877/',
+        session_key: '{{ request.session.session_key }}',
+        locale: 'ru'
+    });
+</script>
+
+<script>
+    var chant_parent = $('#stick-bottom');
+    var container = chant_parent.find('.container');
+    var content = container.find('.bottom-content');
+
+
+    var minified = JSON.parse(sessionStorage.getItem('stick-bottom-minified'));
+    if (!minified) {
+        container.removeClass('stick-bottom-minified');
+        content.removeClass('collapse');
+    }
+
+    $('.toggle-dock').on('click', function () {
+        container.toggleClass('stick-bottom-minified');
+        content.toggleClass('collapse');
+        sessionStorage.setItem('stick-bottom-minified', container.hasClass('stick-bottom-minified'));
+    });
+</script>

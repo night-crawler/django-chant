@@ -1,0 +1,21 @@
+<script type="text/template" id="chant-ui-message-template" xmlns="http://www.w3.org/1999/html">
+{% verbatim %}
+<div class="chant-message" data-pk="{{ id }}">
+    <div class="pull-left">
+        <div class="thumbnail">
+            <img src="{{ user.avatar }}" width="32">
+        </div>
+    </div>
+
+    <div class="chant-message-wrapper">
+        <strong>{{ user.username }}</strong>
+        <div class="pull-right text-muted"><time>{{ created_at_localized }}</time></div>
+        <div class="message-content">
+            {{{ html }}}
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+</div>
+{% endverbatim %}
+</script>
