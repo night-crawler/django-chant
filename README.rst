@@ -15,6 +15,7 @@ Features
 * max connections limit
 * authentication
 * gravatar icons
+* markdown support
 
 
 Requirements
