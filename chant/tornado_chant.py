@@ -209,14 +209,20 @@ class MessagesHandler(WebSocketHandler):
     def subscribed_rooms(self, values=False):
         subscribed_qs = RoomSubscriber.objects\
             .filter(user=self.user)\
-            .select_related('room', 'user')
+            .select_related('room', 'user', 'room__user').prefetch_related('room__subscribers')
         if not values:
             return subscribed_qs
 
         rooms = []
         for s in subscribed_qs:
-            room_dict = model_to_dict(s.room)
-            room_dict['subscriber'] = model_to_dict(s)
+            room_dict = model_to_dict(s.room, exclude=['subscribers'])
+            # room_dict['subscriber'] = model_to_dict(s)
+            room_dict['subscribers'] = []
+            for user in s.room.subscribers.all():
+                user_dict = format_user(user)
+                user_dict['online'] = user.id in self.application.connections
+                room_dict['subscribers'].append(user_dict)
+
             rooms.append(room_dict)
 
         return rooms

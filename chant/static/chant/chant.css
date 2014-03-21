@@ -38,3 +38,11 @@
 .chant-info-wrapper {
     display: inline;
 }
+
+.activate-room{
+    cursor: pointer !important;
+}
+
+.chant-rooms-list .list-group li {
+    border-radius: 0 !important;
+}

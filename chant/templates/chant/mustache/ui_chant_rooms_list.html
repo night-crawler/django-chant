@@ -1,15 +1,38 @@
 <script type="text/template" id="chant-rooms-list-template">
 {% verbatim %}
-    <ul class="list-group small">
+<ul class="list-group">
     {{ #data }}
-        <a id="chant-activate-room-{{ id }}" class="list-group-item activate-room" data-room="{{ id }}" href="">
-            <span class="badge unread-count"></span>
-            <span class="room-name">{{ name }}</span>
-        </a>
+    <li class="list-group-item activate-room" data-room="{{ id }}">
+        <span class="badge unread-count"></span>
+
+        <div class="btn-group">
+            <button type="button room-users" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+
+                {{ #subscribers }}
+                <li>
+                    <a href="" data-user="{{ id }}" title="{{ last_name }} {{ first_name }}">
+                        <img src="{{ avatar }}" width="16">
+                        {{ #online }}
+                            <span class="label label-info">{{ username }}</span>
+                        {{ /online }}
+
+                        {{ ^online }}
+                            <span class="label label-default">{{ username }}</span>
+                        {{ /online }}
+                    </a>
+                </li>
+                {{ /subscribers }}
+
+            </ul>
+        </div>
+
+        <span class="room-name">{{ name }}</span>
+    </li>
     {{ /data }}
-    </ul>
+</ul>
+
 {% endverbatim %}
 </script>
-
-
-

@@ -126,10 +126,16 @@
                 return false;
             });
 
-            chant.el_rooms_container.on('click', '.activate-room', function(){
+            chant.el_rooms_container.on('click', '.activate-room', function(e){
+                if (e.skip_activate){
+                    return
+                }
                 $(this).addClass('active');
                 chant.set_active_room($(this).data('room'));
-                return false;
+            });
+
+            chant.el_rooms_container.on('click', '.activate-room > .btn-group', function(e){
+                e.skip_activate = true;
             });
 
             chant.el_msg_form.keypress(function(e){
