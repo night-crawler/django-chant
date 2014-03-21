@@ -46,3 +46,7 @@
 .chant-rooms-list .list-group li {
     border-radius: 0 !important;
 }
+
+.chant-rooms-list .list-group-item.active {
+    color: #fff;
+}
