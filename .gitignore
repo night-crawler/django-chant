@@ -24,6 +24,7 @@ sdist
 develop-eggs
 .installed.cfg
 lib
+!chant/static/chant/lib
 lib64
 __pycache__
 

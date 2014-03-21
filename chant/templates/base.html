@@ -4,8 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Django chat - pure websocket and tornado">
+    <meta name="author" content="night-crawler">
+
+    <link href="{{ STATIC_URL }}chant/img/favicon.ico" rel="icon" type="image/x-icon" />
 
     <title>{% block title %}{% endblock %}</title>
 
@@ -13,11 +15,14 @@
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css"/>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script src="{{ STATIC_URL }}chant/bootstrap/js/bootstrap.min.js"></script>
+
+    <script src="{{ STATIC_URL }}chant/lib/favico-0.3.4.min.js"></script>
     <script src="{{ STATIC_URL }}chant/lib/slimscroll/jquery.slimscroll.js"></script>
     <script src="{{ STATIC_URL }}chant/lib/jquery.mustache.js"></script>
     <script src="{{ STATIC_URL }}chant/lib/moment-with-langs.min.js"></script>
     <script src="{{ STATIC_URL }}chant/lib/timers.js"></script>
     <script src="{{ STATIC_URL }}chant/lib/chant.js"></script>
+
 
 
     <link href="{{ STATIC_URL }}chant/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -31,6 +36,7 @@
 
 
 {% include "chant/navbar.html" %}
+
 
 
 <div class="container">

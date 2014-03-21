@@ -16,7 +16,8 @@ Features
 * authentication
 * gravatar icons
 * markdown support
-
+* sound notification (html5 audio)
+* favicon notification
 
 Requirements
 ============
@@ -26,9 +27,11 @@ Requirements
 * bootstrap3
 * jquery
 * jquery mustache
-* moment js
+* moment.js
+* jquery favico
 * jquery-slimscroll
 * bootstrap
+* html5
 
 
 Configuration
@@ -47,5 +50,5 @@ RATE_LIMIT::
 
 MAX_CONNECTIONS::
 
-    CHANT_MAX_CONNECTIONS (int)
+    CHANT_MAX_CONNECTIONS = 1024
 
