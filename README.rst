@@ -6,6 +6,8 @@ use `chant` folder in your project.
 DEMO: http://django-chant.force.fm/
 (openid auth only)
 
+.. image:: chant_screen1.png
+
 Features
 ========
 
