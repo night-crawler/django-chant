@@ -16,7 +16,9 @@
             <ul class="nav navbar-nav">
                 <li><a href="{% url 'list_rooms' %}">{% trans "Rooms" %}</a></li>
                 <li><a href="{% url 'edit_room' %}">{% trans "Create room" %}</a></li>
-                <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+                {% if request.user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+                {% endif %}
             </ul>
         </div>
         <!--/.nav-collapse -->

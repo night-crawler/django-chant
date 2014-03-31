@@ -18,7 +18,7 @@ class TimeMixIn(models.Model):
 
 class Room(TimeMixIn, models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, verbose_name=_('Room created by'), related_name='room_users')
-    name = models.CharField(_('Name'), max_length=64, unique=True)
+    name = models.CharField(_('Name'), max_length=64)
     description = models.TextField(_('Description'), blank=True, null=True)
     subscribers = models.ManyToManyField(settings.AUTH_USER_MODEL, through='RoomSubscriber', blank=True, null=True, verbose_name=_('Subscribers'), related_name='room_subscribers')
 
@@ -35,8 +35,11 @@ class Room(TimeMixIn, models.Model):
 
 
 class RoomSubscriber(TimeMixIn, models.Model):
-    room = models.ForeignKey('Room', verbose_name=_('Room'))
+    room = models.ForeignKey('Room', verbose_name=_('Room'), related_name='roomsubscribers')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('User'))
+
+    blacklist = models.BooleanField(_('Blacklist'), default=False)
+    notify = models.BooleanField(_('Notify'), default=True)
 
     class Meta:
         unique_together = (('room', 'user'), )
@@ -69,6 +72,6 @@ def message_pre_save(sender, instance, raw, using, update_fields, **kwargs):
     instance.html = instance.render_markdown()
 
 
-post_save.connect(room_post_save, sender=Room, dispatch_uid='room_post_save')
-post_save.connect(message_post_save, sender=Message, dispatch_uid='message_post_save')
-pre_save.connect(message_pre_save, sender=Message, dispatch_uid='message_pre_save')
+post_save.connect(room_post_save, sender=Room, dispatch_uid='chant_room_post_save')
+post_save.connect(message_post_save, sender=Message, dispatch_uid='chant_message_post_save')
+pre_save.connect(message_pre_save, sender=Message, dispatch_uid='chant_message_pre_save')

@@ -20,7 +20,8 @@
 
             info_area_default_remove_timeout: 2000,
             info_area_onclose_timeout: 2000,
-            info_area_onopen_timeout: 2000
+            info_area_onopen_timeout: 2000,
+            refresh_rooms_timeout: 10000
         },
 
         _create: function () {
@@ -121,7 +122,6 @@
             });
 
             chant.element.on('click', '.refresh-rooms', function(){
-                chant.el_room_filter.val('');
                 chant.send_update_rooms();
                 return false;
             });
@@ -160,18 +160,7 @@
             
             chant.el_room_filter.keyup(function(e){
                 var filter_query = $(this).val();
-                chant.el_rooms_container.find('.activate-room').removeClass('hidden');
-
-                if (!filter_query){
-                    return;
-                }
-
-                chant.el_rooms_container
-                    .find('.activate-room')
-                    .filter(function(){
-                        return $(this).find('.room-name').text().indexOf(filter_query) == -1;
-                    })
-                    .addClass('hidden');
+                chant.filter_rooms(filter_query);
             });
 
             chant.el_messages_container.on('click', '.load-room-history', function(e){
@@ -196,6 +185,19 @@
                 });
             });
 
+            chant.el_rooms_container.on('click', '.toggle-notify-room', function(e){
+                var room_id = $(this).data('room');
+                var state = $(this).data('state');
+                chant._send_set_notify(room_id, !state);
+                return false;
+            });
+
+            chant.el_rooms_container.on('click', '.blacklist-room', function(e){
+                var room_id = $(this).data('room');
+                chant._send_blacklist_room(room_id);
+                return false;
+            });
+
             $(window).on('blur focus', function(e) {
                 var prevType = $(this).data('prevType');
                 if (prevType != e.type) {
@@ -213,6 +215,25 @@
                 $(this).data('prevType', e.type);
             });
 
+            make_timer('chant:refresh_rooms', function(){
+                chant.send_update_rooms();
+            }, chant.options.refresh_rooms_timeout);
+
+        },
+
+        filter_rooms: function(filter_query){
+            this.el_rooms_container.find('.activate-room').removeClass('hidden');
+
+            if (!filter_query){
+                return;
+            }
+
+            this.el_rooms_container
+                .find('.activate-room')
+                .filter(function(){
+                    return $(this).find('.room-name').text().indexOf(filter_query) == -1;
+                })
+                .addClass('hidden');
         },
 
         _render_rooms: function(bundle) {
@@ -220,7 +241,7 @@
             this.el_rooms_container.html(res);
             if (this.rooms){
                 var active_room = sessionStorage.getItem('chant:active-room');
-                if (!(active_room*1)){
+                if (!(active_room*1) || !this.rooms[active_room]){
                     for (var prop in this.rooms){
                         active_room = prop;
                         break;
@@ -229,6 +250,7 @@
                 this.set_active_room(active_room);
             }
 
+            this.filter_rooms(this.el_room_filter.val());
         },
 
         set_active_room: function(room_id){
@@ -278,13 +300,33 @@
                     break;
 
                 case 'rooms':
+                    var received_rooms = [];
                     for (var i=0; i<bundle.data.length; i++){
                         var r = bundle.data[i];
-                        this.rooms[r.id] = r;
-                        this.rooms[r.id]['unread'] = 0;
-                        this.rooms[r.id]['can_send_typing'] = true;
+                        if (typeof this.rooms[r.id] == 'undefined'){
+                            this.rooms[r.id] = {};
+                        }
+                        $.extend(this.rooms[r.id], r);
+                        received_rooms.push(r.id);
+
+                        if (typeof this.rooms[r.id]['unread'] == 'undefined'){
+                            this.rooms[r.id]['unread'] = 0;
+                            this.rooms[r.id]['can_send_typing'] = true;
+                        }
                     }
-                    this._render_rooms(bundle);
+
+                    for (var r in this.rooms){
+                        if (received_rooms.indexOf(r*1) == -1){
+                            delete this.rooms[r];
+                        }
+                    }
+
+                    var rooms_list = [];
+                    $.each(this.rooms, function(room_id, room_data){
+                        rooms_list.push(room_data);
+                    });
+
+                    this._render_rooms({data: rooms_list});
                     break;
 
                 case 'post':
@@ -297,6 +339,14 @@
 
                 case 'typing':
                     this._process_typing(bundle);
+                    break;
+
+                case 'notify':
+                    this.send_update_rooms();
+                    break;
+
+                case 'blacklist':
+                    this.send_update_rooms();
                     break;
             }
         },
@@ -416,6 +466,20 @@
             this.send_json({
                 request: 'authenticate',
                 data: this.options.session_key
+            });
+        },
+
+        _send_set_notify: function(room_id, value) {
+            this.send_json({
+                request: 'notify',
+                data: {room: room_id, value: value}
+            });
+        },
+
+        _send_blacklist_room: function(room_id) {
+            this.send_json({
+                request: 'blacklist',
+                data: {room: room_id}
             });
         },
 

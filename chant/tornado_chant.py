@@ -19,7 +19,7 @@ from django.utils.timezone import now
 
 from .models import Message, RoomSubscriber, Room
 from .utils import model_to_dict, import_to_python, RateLimiter
-from .settings import FORMAT_USER_PATH, MAX_CONNECTIONS, RATE_LIMITS
+from .settings import FORMAT_USER_PATH, MAX_CONNECTIONS, RATE_LIMITS, ALLOWED_COMMANDS
 
 
 session_engine = import_module(settings.SESSION_ENGINE)
@@ -137,13 +137,24 @@ class TypingResponse(SuccessResponse):
         self['command'] = 'typing'
 
 
+class NotifyResponse(SuccessResponse):
+    def __init__(self, **kwargs):
+        super(NotifyResponse, self).__init__(**kwargs)
+        self['command'] = 'notify'
+
+
+class BlacklistResponse(SuccessResponse):
+    def __init__(self, **kwargs):
+        super(BlacklistResponse, self).__init__(**kwargs)
+        self['command'] = 'blacklist'
+
+
 class MessagesHandler(WebSocketHandler):
     def __init__(self, *args, **kwargs):
         self.room_id = None
         self.session_key = None
         self.user = None
         self.request_counter = 0
-        self.allowed_commands = ['authenticate', 'post', 'typing', 'history', 'rooms']
 
         self.rate_blocks = {k: RateLimiter(**v) for k, v in RATE_LIMITS.items()}
 
@@ -183,7 +194,7 @@ class MessagesHandler(WebSocketHandler):
         request = msg.get('request')
         data = msg.get('data')
 
-        if not request in self.allowed_commands:
+        if not request in ALLOWED_COMMANDS:
             self.json_response(CommandNotAllowedResponse())
 
         if self.rate_blocks['on_message']():
@@ -208,17 +219,17 @@ class MessagesHandler(WebSocketHandler):
 
     def subscribed_rooms(self, values=False):
         subscribed_qs = RoomSubscriber.objects\
-            .filter(user=self.user)\
+            .filter(user=self.user, blacklist=False)\
             .select_related('room', 'user', 'room__user').prefetch_related('room__subscribers')
         if not values:
             return subscribed_qs
 
         rooms = []
-        for s in subscribed_qs:
-            room_dict = model_to_dict(s.room, exclude=['subscribers'])
-            # room_dict['subscriber'] = model_to_dict(s)
+        for rs in subscribed_qs:
+            room_dict = model_to_dict(rs.room, exclude=['subscribers'])
+            room_dict['notify'] = rs.notify
             room_dict['subscribers'] = []
-            for user in s.room.subscribers.all():
+            for user in rs.room.subscribers.all():
                 user_dict = format_user(user)
                 user_dict['online'] = user.id in self.application.connections
                 room_dict['subscribers'].append(user_dict)
@@ -249,7 +260,7 @@ class MessagesHandler(WebSocketHandler):
             return self.json_response(UnauthenticatedResponse())
 
         lookup = (Q(user=self.user) | Q(subscribers__in=[self.user])) & Q(pk=room_id)
-        room = Room.objects.filter(lookup).prefetch_related('subscribers')[0]
+        room = Room.objects.filter(lookup).distinct().prefetch_related('roomsubscribers')[0]
 
         message_dict = {'text': message, 'room': room}
         if self.user and self.user.is_authenticated():
@@ -259,7 +270,7 @@ class MessagesHandler(WebSocketHandler):
         message = Message(**message_dict)
         message.save()
 
-        subscribers_set = room.subscribers.all().values_list('id', flat=True)
+        subscribers_set = room.roomsubscribers.filter(blacklist=False, notify=True).values_list('user', flat=True)
         for uid, user_connections in self.application.connections.items():
             if not uid in subscribers_set:
                 continue
@@ -306,6 +317,23 @@ class MessagesHandler(WebSocketHandler):
 
         messages_qs = Message.objects.filter(filters).select_related('user').order_by('-id')[:limit]
         self.json_response(HistoryResponse(room=data['room'], messages=messages_qs))
+
+    @run_async
+    def chant_notify(self, data, callback=None):
+        if not self.user or not self.user.is_authenticated():
+            return self.json_response(UnauthenticatedResponse())
+
+        room_id, value = data.get('room'), data.get('value')
+        RoomSubscriber.objects.filter(user=self.user, room=room_id).update(notify=value)
+        self.json_response(NotifyResponse())
+
+    @run_async
+    def chant_blacklist(self, data, callback=None):
+        if not self.user or not self.user.is_authenticated():
+            return self.json_response(UnauthenticatedResponse())
+
+        RoomSubscriber.objects.filter(user=self.user, room=data.get('room')).update(blacklist=True)
+        self.json_response(BlacklistResponse())
 
 
 class ChantApplication(Application):

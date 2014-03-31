@@ -7,19 +7,23 @@ GRAVATAR_DEFAULT = getattr(settings, 'CHANT_GRAVATAR_DEFAULT', 'identicon')
 AVATAR_WIDTH = getattr(settings, 'CHANT_AVATAR_WIDTH', 32)
 AVATAR_HEIGHT = getattr(settings, 'CHANT_AVATAR_HEIGHT', 32)
 
+ALLOWED_COMMANDS = [
+    'authenticate',
+    'post',
+    'typing',
+    'history',
+    'rooms',
+    'notify',
+    'blacklist'
+]
+
 UNLIMITED = {
     'max_rate': 1,
     'time_unit': 2
 }
 
-DEFAULT_RATE_LIMITS = {
-    'on_message': UNLIMITED,
-    'authenticate': UNLIMITED,
-    'post': UNLIMITED,
-    'typing': UNLIMITED,
-    'history': UNLIMITED,
-    'rooms': UNLIMITED
-}
+DEFAULT_RATE_LIMITS = {cmd: UNLIMITED for cmd in ALLOWED_COMMANDS}
+DEFAULT_RATE_LIMITS['on_message'] = UNLIMITED
 
 RATE_LIMITS = getattr(settings, 'CHANT_RATE_LIMITS', DEFAULT_RATE_LIMITS)
 for k, v in DEFAULT_RATE_LIMITS.items():
@@ -27,3 +31,4 @@ for k, v in DEFAULT_RATE_LIMITS.items():
         RATE_LIMITS[k] = v
 
 MAX_CONNECTIONS = getattr(settings, 'CHANT_MAX_CONNECTIONS', 1024)
+

@@ -28,4 +28,4 @@ class SubscriberEditForm(forms.ModelForm):
 
     class Meta:
         model = RoomSubscriber
-        exclude = ('room', )
+        exclude = ('room', 'blacklist', 'notify')

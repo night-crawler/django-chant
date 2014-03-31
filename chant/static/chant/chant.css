@@ -50,3 +50,7 @@
 .chant-rooms-list .list-group-item.active {
     color: #fff;
 }
+
+.room-subscribers {
+    text-shadow: none !important;
+}

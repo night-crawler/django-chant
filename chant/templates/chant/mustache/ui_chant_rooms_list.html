@@ -1,15 +1,16 @@
+{% load i18n %}
 <script type="text/template" id="chant-rooms-list-template">
 {% verbatim %}
 <ul class="list-group small">
     {{ #data }}
     <li class="list-group-item activate-room" data-room="{{ id }}">
-        <span class="badge unread-count"></span>
+        <span class="badge unread-count">{{ #unread }}{{ unread }}{{ /unread }}{{ ^unread }}{{ /unread }}</span>
 
         <div class="btn-group">
             <button type="button room-users" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                 <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu" role="menu">
+            <ul class="dropdown-menu room-subscribers" role="menu">
 
                 {{ #subscribers }}
                 <li>
@@ -25,7 +26,20 @@
                     </a>
                 </li>
                 {{ /subscribers }}
+                <li class="divider"></li>
 
+                <li>
+                    <a href="" class="toggle-notify-room" data-room={{ id }} data-state={{ notify }}>
+                        {{ #notify }}<i class="glyphicon glyphicon-check"></i>{{ /notify }}
+                        {{ ^notify }}<i class="glyphicon glyphicon-ban-circle"></i>{{ /notify }}
+                        {% endverbatim %}{% trans "Notified" %}{% verbatim %}
+                    </a>
+                </li>
+
+                <li>
+                    <a href="" class="blacklist-room" data-room={{ id }}>
+                    {% endverbatim %}{% trans "Blacklist" %}{% verbatim %}</a>
+                </li>
             </ul>
         </div>
 
@@ -36,3 +50,4 @@
 
 {% endverbatim %}
 </script>
+
