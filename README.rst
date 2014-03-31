@@ -4,7 +4,7 @@ At this moment it's not a standalone chat application, but it can easily be extr
 use `chant` folder in your project.
 
 DEMO: http://django-chant.force.fm/
-(use google openid auth)
+(use openid auth only)
 
 Features
 ========
@@ -12,6 +12,8 @@ Features
 * rooms
 * typing notification
 * rate limits
+* blacklist
+* optional notification (user may cancel chat updates)
 * max connections limit
 * authentication
 * gravatar icons
@@ -45,6 +47,14 @@ RATE_LIMIT::
         'typing': UNLIMITED,
         'history': UNLIMITED,
         'rooms': UNLIMITED
+    }
+
+
+where `UNLIMITED` is a dict like::
+
+    UNLIMITED = {
+        'max_rate': 1,
+        'time_unit': 2
     }
 
 
